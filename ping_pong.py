@@ -1,5 +1,8 @@
 from pygame import*
 
+font.init()
+font1 = font.SysFont("Arial",55)
+
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y, player_speed, size_x, size_y):
         super().__init__()
@@ -33,13 +36,15 @@ clock = time.Clock()
 FPS = 60
 background = transform.scale(image.load('647a5f52eae92.jpg'),(700,500))
 
-platform_1 = Player("PicsArt_06-02-11.34.11.png",0,0,5,50,150)
-platform_2 = Player("PicsArt_06-02-11.34.11.png",650,0,5,50,150)
-tumbleweed = Player("647a5f4f7fb8c.png",350,0,2,85,65)
+platform_1 = Player("PicsArt_06-02-11.34.11.png",0,0,5,35,150)
+platform_2 = Player("PicsArt_06-02-11.34.11.png",650,0,5,35,150)
+tumbleweed = GameSprite("647a5f4f7fb8c.png",350,0,2,65,55)
 
 game = True
 finish = False
 
+speed_x = 2
+speed_y = 2
 
 while game:
     for e in event.get():
@@ -53,7 +58,20 @@ while game:
         platform_2.reset()
         platform_2.player_2()
         tumbleweed.reset()
-        tumbleweed.player_1()
+        tumbleweed.rect.x += speed_x      
+        tumbleweed.rect.y += speed_y
+        if tumbleweed.rect.y > 445 or tumbleweed.rect.y < 0:    
+            speed_y*=-1
+        if sprite.collide_rect(platform_1,tumbleweed) or sprite.collide_rect(platform_2,tumbleweed) :
+            speed_x *=-1
+        if tumbleweed.rect.x > 700:
+            finish = True
+            lose_text = font1.render("The second player lost",2,(0, 0, 0))
+            window.blit(lose_text,(150,200))
+        if tumbleweed.rect.x < 0:
+            finish = True
+            lose_text = font1.render("The first player lost",2,(0, 0, 0))
+            window.blit(lose_text,(140,200)) 
         
     clock.tick(FPS)
     display.update()
